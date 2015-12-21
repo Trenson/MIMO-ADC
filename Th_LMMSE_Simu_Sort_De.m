@@ -1,4 +1,4 @@
-function [S_out,S_in,MSE]= Th_LMMSE_Simu_Sort(K,N,H,snRdB,snrNo,modType,Q_StepSize,B_Bit1,B_Bit2,B_Bit3,S1,S2,S3)
+function [S_out,S_in,MSE]= Th_LMMSE_Simu_Sort_De(K,N,H,snRdB,snrNo,modType,Q_StepSize,B_Bit1,B_Bit2,B_Bit3,S1,S2,S3)
 
      Q(1,:) = [2.638, 1.925, 1.519, 1.277, 1.131, 1.043, 0.990]; % optimal step size of 1-bit
     Q(2,:) = [0.992, 0.874, 0.801, 0.759, 0.735, 0.721, 0.713]; % optimal step size of 2-bit
@@ -14,7 +14,7 @@ function [S_out,S_in,MSE]= Th_LMMSE_Simu_Sort(K,N,H,snRdB,snrNo,modType,Q_StepSi
     [X,M]=Source_Gen(K,modType);
     
     H(:,K+1)=sum(abs(H').^2)';
-    H=sortrows(H,K+1);
+    H=sortrows(H,-(K+1));
     H=H(:,1:K);
     
     Y= H*X+W;

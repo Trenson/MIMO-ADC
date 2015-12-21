@@ -1,4 +1,4 @@
-function [S_out,S_in,MSE] = Th_GAMP_Simu(K,N,H,snRdB,snrNo,modType,Q_StepSize,B_Bit1,B_Bit2,B_Bit3,S1,S2,S3)
+function [S_out,S_in,MSE] = Th_GAMP_Simu_Corr(K,N,H,snRdB,snrNo,modType,Q_StepSize,B_Bit1,B_Bit2,B_Bit3,S1,S2,S3)
 % [mse_X Pe] = Th_GAMP_Simu(K,N,snRdB,modType,B,Delta)
 % Simulation result for MIMO with perfect CSI --------------
 % MIMO channel:
@@ -36,6 +36,22 @@ function [S_out,S_in,MSE] = Th_GAMP_Simu(K,N,H,snRdB,snrNo,modType,Q_StepSize,B_
     
     W=(randn(N,1)+1j*randn(N,1))*1/sqrt(2)*sqrt(sigma2);
     [X,M]=Source_Gen(K,modType);
+    
+    H(:,K+1)=sum(abs(H').^2)';
+    H=sortrows(H,K+1);
+    H=H(:,1:K);
+    
+    y=zeros(1,K);
+    A=H(1:N-K,:);
+    x=H(N,:);
+    for i = 1:N-K
+        y = A(i,1:K);
+        corr = abs(corrcoef(x,y));
+        A(i,K+1) = corr(1,2);
+    end
+    A=sortrows(A,K+1);
+    A=A(:,1:K);
+    H(1:N-K,:)=A;
     
     Y= H*X+W;
     [YY,HH,XX]=comp2real(Y,H,X);

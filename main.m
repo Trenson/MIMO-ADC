@@ -12,8 +12,8 @@
     B_Bit2 = 7; %7
     B_Bit3 = 5;
     
-    S1 = N*0.8;
-    S2 = N*0.2;
+    S1 = N*0.7;
+    S2 = N*0.15;
     S3 = N-S1-S2;
 
     Frame_Num = 1000; %the number of simulation frame
@@ -36,7 +36,7 @@
                     [symbol,symbol_out,MSE_temp]=Th_GAMP_Simu(K,N,H,snRdB(isnr),isnr,modType,Q_StepSize,B_Bit1,B_Bit2,B_Bit3,S1,S2,S3);
                     [symbol2,symbol_out2,MSE_temp2]=Th_GAMP_Simu_Sort(K,N,H,snRdB(isnr),isnr,modType,Q_StepSize,B_Bit1,B_Bit2,B_Bit3,S1,S2,S3);
                 else
-                    [symbol,symbol_out,MSE_temp]=Th_LMMSE_Simu_Det(K,N,H,snRdB(isnr),isnr,modType,Q_StepSize,B_Bit1,B_Bit2,B_Bit3,S1,S2,S3);
+                    [symbol,symbol_out,MSE_temp]=Th_LMMSE_Simu(K,N,H,snRdB(isnr),isnr,modType,Q_StepSize,B_Bit1,B_Bit2,B_Bit3,S1,S2,S3);
                     [symbol2,symbol_out2,MSE_temp2]=Th_LMMSE_Simu_Sort(K,N,H,snRdB(isnr),isnr,modType,Q_StepSize,B_Bit1,B_Bit2,B_Bit3,S1,S2,S3);
                 end
                 MSE(isnr) = MSE(isnr)+MSE_temp;               

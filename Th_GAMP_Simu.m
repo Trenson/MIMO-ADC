@@ -31,7 +31,7 @@ function [S_out,S_in,MSE] = Th_GAMP_Simu(K,N,H,snRdB,snrNo,modType,Q_StepSize,B_
     Q(3,:) = [0.596, 0.531, 0.489, 0.464, 0.449, 0.440, 0.436]; % optimal step size of 3-bit
     Q(4,:) = [0.104, 0.092, 0.085, 0.080, 0.077, 0.076, 0.075]; % optimal step size of 6-bit
     Q_StepSize1 = Q(1,snrNo); % chooose the optimal step for 1-bit or 2-bit
-    Q_StepSize2 = Q(4,snrNo); % chooose the optimal step for 1-bit or 2-bit
+    Q_StepSize2 = Q(2,snrNo); % chooose the optimal step for 1-bit or 2-bit
     Q_StepSize3 = Q(3,snrNo); % chooose the optimal step for 7-bit
     
     W=(randn(N,1)+1j*randn(N,1))*1/sqrt(2)*sqrt(sigma2);

@@ -1,4 +1,4 @@
-function [S_out,S_in,MSE]= Th_LMMSE_Simu(K,N,H,snRdB,snrNo,modType,Q_StepSize,B_Bit1,B_Bit2,B_Bit3,S1,S2,S3)
+function [S_out,S_in,MSE,GMI,REF]= Th_LMMSE_Simu(K,N,H,snRdB,snrNo,modType,Q_StepSize,B_Bit1,B_Bit2,B_Bit3,S1,S2,S3)
 
     Q(1,:) = [2.638, 1.925, 1.519, 1.277, 1.131, 1.043, 0.990]; % optimal step size of 1-bit
     Q(2,:) = [0.992, 0.874, 0.801, 0.759, 0.735, 0.721, 0.713]; % optimal step size of 2-bit
@@ -14,6 +14,52 @@ function [S_out,S_in,MSE]= Th_LMMSE_Simu(K,N,H,snRdB,snrNo,modType,Q_StepSize,B_
     [X,M]=Source_Gen(K,modType);
     Y= H*X+W;
     YY=[real(Y);imag(Y)];
+    
+%     Rrr = zeros(N,N);
+%     Rrx = zeros(N,1);
+%     delta = zeros(N,1);
+%     delta(N-S2+1:N) = 1;
+%     es = 1;
+%     for n = 1 : N
+%         for m = 1 : N
+%             if n == m
+%                 Rrr(n,m) = 1 + delta(n)*norm(H(n,:))^2*es + 1 - delta(n);
+%             else
+%                 Rrr(n,m) = H(n,:)*H(m,:)'*es*(delta(n)*delta(m) + delta(n)*(1 - delta(m))*sqrt(4/(pi*(norm(H(m,:))^2*es+1))) + ...
+%                 (1 - delta(n))*delta(m)*sqrt(4/(pi*(norm(H(n,:))^2*es+1))) + (1 - delta(n))*(1 - delta(m))*4/pi*(...
+%                 asin(real(H(n,:)*H(m,:)')*es/(sqrt(norm(H(n,:))^2*es+1)*sqrt(norm(H(m,:))^2*es+1))) + ...
+%                 1j*asin(imag(H(n,:)*H(m,:)')*es/(sqrt(norm(H(n,:))^2*es+1)*sqrt(norm(H(m,:))^2*es+1)))));
+%             end            
+%         end       
+%     end
+%     save Rrr Rrr; 
+%     GMI = 0;
+%     for u = 1:K
+%         for n = 1:N
+%             Rrx(n) = H(n,u)*es*(delta(n) + (1 - delta(n))*sqrt(4/(pi*(norm(H(n,:))^2*es+1))));
+%         end
+%         k = real(Rrx'*(Rrr\Rrx))/es;
+%         GMI = GMI + log(1 + k/(1-k))/log(2);
+%     end
+%     for n = 1 :N
+%         sumH = 0;
+%         for l = 1: K
+%             sumH = sumH + H(n,l)*X(l,1);
+%         end
+%         r(n,1) = delta(n)*(sumH + W(n)) + (1 - delta(n))*sign(sumH + W(n));
+%     end
+%     cov(r,r)
+%     GMI = GMI/K;
+    es = 10.^(snRdB/10)/K;
+    [kappa_multiuser_optimized]=rate_multiuser_optimized(N, H.', S2, es);
+    GMI = log(1 + kappa_multiuser_optimized/(1-kappa_multiuser_optimized))/log(2);
+    REF = real(log(det(eye(K)+es*H.'*conj(H)))/log(2)/K);
+
+%       for n = 1:N
+%           Rrx(n,1) = H(n,1)*es*(delta(n) + (1 - delta(n))*sqrt(4/(pi*(sum(abs(H(n,:)).^2)*es+1))));
+%       end
+%       k = real(1*Rrx'*inv(Rrr)*Rrx);
+%       GMI = log(1 + k/(1-k))/log(2);
     
 %     YY_hat1=Quan(YY,B_Bit1,Q_StepSize);
 %     YY_hat2=Quan(YY,B_Bit2,Q_StepSize);

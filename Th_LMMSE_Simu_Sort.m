@@ -1,4 +1,4 @@
-function [S_out,S_in,MSE]= Th_LMMSE_Simu_Sort(K,N,H,snRdB,snrNo,modType,Q_StepSize,B_Bit1,B_Bit2,B_Bit3,S1,S2,S3)
+function [S_out,S_in,MSE,GMI,REF]= Th_LMMSE_Simu_Sort(K,N,H,snRdB,snrNo,modType,Q_StepSize,B_Bit1,B_Bit2,B_Bit3,S1,S2,S3)
 
      Q(1,:) = [2.638, 1.925, 1.519, 1.277, 1.131, 1.043, 0.990]; % optimal step size of 1-bit
     Q(2,:) = [0.992, 0.874, 0.801, 0.759, 0.735, 0.721, 0.713]; % optimal step size of 2-bit
@@ -25,6 +25,10 @@ function [S_out,S_in,MSE]= Th_LMMSE_Simu_Sort(K,N,H,snRdB,snrNo,modType,Q_StepSi
 %     YY_hat1=Quan(YY,B_Bit1,Q_StepSize);
 %     YY_hat2=Quan(YY,B_Bit2,Q_StepSize);
 %     YY_hat = [YY_hat1(1:S1);YY_hat2(S1+1:N);YY_hat1(N+1:N+S1);YY_hat2(N+S1+1:2*N)];
+    es = 10.^(snRdB/10)/K;
+    [kappa_multiuser_optimized]=rate_multiuser_optimized(N, H.', S2, es);
+    GMI = log(1 + kappa_multiuser_optimized/(1-kappa_multiuser_optimized))/log(2);
+    REF = real(log(det(eye(K)+es*H.'*conj(H)))/log(2)/K);
     
     YY_hat1=Quan(YY,B_Bit1,Q_StepSize1);
     YY_hat2=Quan(YY,B_Bit2,Q_StepSize2);
